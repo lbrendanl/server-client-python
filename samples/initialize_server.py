@@ -4,18 +4,19 @@
 # By default, all content is published to the Default project on the Default site.
 ####
 
-import tableauserverclient as TSC
 import argparse
 import getpass
-import logging
 import glob
+import logging
+import tableauserverclient as TSC
+
 
 def main():
     parser = argparse.ArgumentParser(description='Initialize a server with content.')
     parser.add_argument('--server', '-s', required=True, help='server address')
     parser.add_argument('--datasources-folder', '-df', required=True, help='folder containing datasources')
     parser.add_argument('--workbooks-folder', '-wf', required=True, help='folder containing workbooks')
-    parser.add_argument('--site', '-si', required=False, default='Default', help='site to use')
+    parser.add_argument('--site-id', '-sid', required=False, default='', help='site id of the site to use')
     parser.add_argument('--project', '-p', required=False, default='Default', help='project to use')
     parser.add_argument('--username', '-u', required=True, help='username to sign into server')
     parser.add_argument('--logging-level', '-l', choices=['debug', 'info', 'error'], default='error',
@@ -41,32 +42,33 @@ def main():
         ################################################################################
         print("Checking to see if we need to create the site...")
 
-        all_sites, _ = server.sites.get()
-        existing_site = next((s for s in all_sites if s.name == args.site), None)
+        all_sites = TSC.Pager(server.sites)
+        existing_site = next((s for s in all_sites if s.content_url == args.site_id), None)
 
         # Create the site if it doesn't exist
         if existing_site is None:
-            print("Site not found: {0} Creating it...").format(args.site)
-            new_site = TSC.SiteItem(name=args.site, content_url=args.site.replace(" ", ""), admin_mode=TSC.SiteItem.AdminMode.ContentAndUsers)
+            print("Site not found: {0} Creating it...").format(args.site_id)
+            new_site = TSC.SiteItem(name=args.site_id, content_url=args.site_id.replace(" ", ""),
+                                    admin_mode=TSC.SiteItem.AdminMode.ContentAndUsers)
             server.sites.create(new_site)
         else:
-            print("Site {0} exists. Moving on...").format(args.site)
-
+            print("Site {0} exists. Moving on...").format(args.site_id)
 
     ################################################################################
     # Step 3: Sign-in to our target site
     ################################################################################
     print("Starting our content upload...")
     server_upload = TSC.Server(args.server)
-    tableau_auth.site = args.site
+
+    tableau_auth.site_id = args.site_id
 
     with server_upload.auth.sign_in(tableau_auth):
 
         ################################################################################
         # Step 4: Create the project we need only if it doesn't exist
         ################################################################################
-        all_projects, _ = server_upload.projects.get()
-        project = next((p for p in all_projects if p.name == args.project), None)
+        all_projects = TSC.Pager(server_upload.projects)
+        project = next((p for p in all_projects if p.name.lower() == args.project.lower()), None)
 
         # Create our project if it doesn't exist
         if project is None:
@@ -81,6 +83,7 @@ def main():
         ################################################################################
         publish_datasources_to_site(server_upload, project, args.datasources_folder)
         publish_workbooks_to_site(server_upload, project, args.workbooks_folder)
+
 
 def publish_datasources_to_site(server_object, project, folder):
     path = folder + '/*.tds*'
