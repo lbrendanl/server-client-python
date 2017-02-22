@@ -24,7 +24,7 @@ class Datasources(Endpoint):
 
     @property
     def baseurl(self):
-        return "{0}/sites/{1}/datasources".format(self.parent_srv.baseurl, self.parent_srv.site_id)
+        return "{0}/datasources".format(self.siteurl)
 
     # Get all datasources
     def get(self, req_options=None):

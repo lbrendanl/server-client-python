@@ -10,7 +10,7 @@ logger = logging.getLogger('tableau.endpoint.users')
 class Users(Endpoint):
     @property
     def baseurl(self):
-        return "{0}/sites/{1}/users".format(self.parent_srv.baseurl, self.parent_srv.site_id)
+        return "{0}/users".format(self.siteurl)
 
     # Gets all users
     def get(self, req_options=None):

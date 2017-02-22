@@ -24,7 +24,7 @@ class Workbooks(Endpoint):
 
     @property
     def baseurl(self):
-        return "{0}/sites/{1}/workbooks".format(self.parent_srv.baseurl, self.parent_srv.site_id)
+        return "{0}/workbooks".format(self.siteurl)
 
     # Get all workbooks on site
     def get(self, req_options=None):

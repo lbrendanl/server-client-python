@@ -17,6 +17,10 @@ class Endpoint(object):
     def __init__(self, parent_srv):
         self.parent_srv = parent_srv
 
+    @property
+    def siteurl(self):
+        return "{0}/sites/{1}".format(self.parent_srv.baseurl, self.parent_srv.site_id)
+
     @staticmethod
     def _make_common_headers(auth_token, content_type):
         headers = {}

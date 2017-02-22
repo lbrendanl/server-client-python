@@ -10,7 +10,7 @@ logger = logging.getLogger('tableau.endpoint.groups')
 class Groups(Endpoint):
     @property
     def baseurl(self):
-        return "{0}/sites/{1}/groups".format(self.parent_srv.baseurl, self.parent_srv.site_id)
+        return "{0}/groups".format(self.siteurl)
 
     # Gets all groups
     def get(self, req_options=None):

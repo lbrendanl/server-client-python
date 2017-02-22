@@ -21,13 +21,13 @@ class RequestOptionTests(unittest.TestCase):
         self.server._site_id = 'dad65087-b08b-4603-af4e-2887b8aafc67'
         self.server._auth_token = 'j80k54ll2lfMZ0tv97mlPvvSCRyD0DOM'
 
-        self.baseurl = '{0}/{1}'.format(self.server.sites.baseurl, self.server._site_id)
+        self.siteurl = self.server.sites.siteurl
 
     def test_pagination(self):
         with open(PAGINATION_XML, 'rb') as f:
             response_xml = f.read().decode('utf-8')
         with requests_mock.mock() as m:
-            m.get(self.baseurl + '/views?pageNumber=1&pageSize=10', text=response_xml)
+            m.get(self.siteurl + '/views?pageNumber=1&pageSize=10', text=response_xml)
             req_option = TSC.RequestOptions().page_size(10)
             all_views, pagination_item = self.server.views.get(req_option)
 
@@ -40,7 +40,7 @@ class RequestOptionTests(unittest.TestCase):
         with open(PAGE_NUMBER_XML, 'rb') as f:
             response_xml = f.read().decode('utf-8')
         with requests_mock.mock() as m:
-            m.get(self.baseurl + '/views?pageNumber=3', text=response_xml)
+            m.get(self.siteurl + '/views?pageNumber=3', text=response_xml)
             req_option = TSC.RequestOptions().page_number(3)
             all_views, pagination_item = self.server.views.get(req_option)
 
@@ -53,7 +53,7 @@ class RequestOptionTests(unittest.TestCase):
         with open(PAGE_SIZE_XML, 'rb') as f:
             response_xml = f.read().decode('utf-8')
         with requests_mock.mock() as m:
-            m.get(self.baseurl + '/views?pageSize=5', text=response_xml)
+            m.get(self.siteurl + '/views?pageSize=5', text=response_xml)
             req_option = TSC.RequestOptions().page_size(5)
             all_views, pagination_item = self.server.views.get(req_option)
 
@@ -66,7 +66,7 @@ class RequestOptionTests(unittest.TestCase):
         with open(FILTER_EQUALS, 'rb') as f:
             response_xml = f.read().decode('utf-8')
         with requests_mock.mock() as m:
-            m.get(self.baseurl + '/workbooks?filter=name:eq:RESTAPISample', text=response_xml)
+            m.get(self.siteurl + '/workbooks?filter=name:eq:RESTAPISample', text=response_xml)
             req_option = TSC.RequestOptions()
             req_option.filter.add(TSC.Filter(TSC.RequestOptions.Field.Name,
                                              TSC.RequestOptions.Operator.Equals, 'RESTAPISample'))
@@ -80,7 +80,7 @@ class RequestOptionTests(unittest.TestCase):
         with open(FILTER_TAGS_IN, 'rb') as f:
             response_xml = f.read().decode('utf-8')
         with requests_mock.mock() as m:
-            m.get(self.baseurl + '/workbooks?filter=tags:in:[sample,safari,weather]', text=response_xml)
+            m.get(self.siteurl + '/workbooks?filter=tags:in:[sample,safari,weather]', text=response_xml)
             req_option = TSC.RequestOptions()
             req_option.filter.add(TSC.Filter(TSC.RequestOptions.Field.Tags, TSC.RequestOptions.Operator.In,
                                              ['sample', 'safari', 'weather']))
@@ -97,7 +97,7 @@ class RequestOptionTests(unittest.TestCase):
         # To ensure that this is deterministic, run this a few times
         with requests_mock.mock() as m:
             # Sometimes pep8 requires you to do things you might not otherwise do
-            url = ''.join((self.baseurl, '/workbooks?pageNumber=1&pageSize=100&',
+            url = ''.join((self.siteurl, '/workbooks?pageNumber=1&pageSize=100&',
                           'filter=name:eq:foo,tags:in:[sample,safari,weather]'))
             m.get(url, text=response_xml)
             req_option = TSC.RequestOptions()

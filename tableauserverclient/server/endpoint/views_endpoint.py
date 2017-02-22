@@ -13,11 +13,6 @@ class Views(Endpoint):
         super(Views, self).__init__(parent_srv)
         self._resource_tagger = _ResourceTagger(parent_srv)
 
-    # Used because populate_preview_image functionaliy requires workbook endpoint
-    @property
-    def siteurl(self):
-        return "{0}/sites/{1}".format(self.parent_srv.baseurl, self.parent_srv.site_id)
-
     @property
     def baseurl(self):
         return "{0}/views".format(self.siteurl)

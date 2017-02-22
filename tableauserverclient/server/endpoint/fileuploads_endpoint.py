@@ -18,7 +18,7 @@ class Fileuploads(Endpoint):
 
     @property
     def baseurl(self):
-        return "{0}/sites/{1}/fileUploads".format(self.parent_srv.baseurl, self.parent_srv.site_id)
+        return "{0}/fileUploads".format(self.siteurl)
 
     def initiate(self):
         url = self.baseurl
