@@ -10,7 +10,7 @@ logger = logging.getLogger('tableau.endpoint.sites')
 class Sites(Endpoint):
     @property
     def baseurl(self):
-        return self.siteurl
+        return "{0}/sites".format(self.parent_srv.baseurl)
 
     # Gets all sites
     def get(self, req_options=None):
